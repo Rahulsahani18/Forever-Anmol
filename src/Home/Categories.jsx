@@ -1,30 +1,33 @@
-
 import { motion } from 'motion/react';
 
 const categories = [
   {
-    name: "Australia",
-    price: "$116 - $225",
-    image: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?auto=format&fit=crop&q=80&w=800",
-    hasLink: true
+    name: "Kerala",
+    price: "₹15,000 - ₹35,000",
+    image: "https://www.keralaholidays.com/uploads/tourpackages/main/wwww.jpg",
+    hasLink: true,
+    region: "South India"
   },
   {
-    name: "Switzerland",
-    price: "$175 - $200",
-    image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=800",
-    hasLink: true
+    name: "Goa",
+    price: "₹12,000 - ₹30,000",
+    image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80&w=800",
+    hasLink: true,
+    region: "West India"
   },
   {
-    name: "Thailand",
-    price: "$85 - $200",
-    image: "https://images.unsplash.com/photo-1517154421773-0529f29ea451?auto=format&fit=crop&q=80&w=800",
-    hasLink: true
+    name: "Manali",
+    price: "₹10,000 - ₹28,000",
+    image: "https://manalitourism.co.in/images/places-to-visit/headers/manalitourism-header-manali-tourism.jpg.jpg",
+    hasLink: true,
+    region: "North India"
   },
   {
-    name: "Korea",
-    price: "$175 - $285",
-    image: "https://images.unsplash.com/photo-1517154421773-0529f29ea451?auto=format&fit=crop&q=80&w=800",
-    hasLink: true
+    name: "Jaipur",
+    price: "₹12,000 - ₹25,000",
+    image: "https://www.bharatbooking.com/admin/webroot/img/uploads/holiday-package-gallery/1707129379_861624-jaipur-sightseeing--tour-package-slider-image.webp",
+    hasLink: true,
+    region: "North India"
   }
 ];
 
@@ -57,7 +60,7 @@ const Categories = () => {
             viewport={{ once: true }}
             className="text-[11px] font-bold tracking-[0.4em] text-[#1B3D39]/50 uppercase mb-6 block"
           >
-            Destinations Around The Globe
+            Incredible India Destinations
           </motion.span>
           <motion.h2 
             initial={{ opacity: 0, y: 20 }}
@@ -66,7 +69,7 @@ const Categories = () => {
             transition={{ delay: 0.1 }}
             className="text-5xl md:text-[5.5rem] font-serif text-[#1B3D39] tracking-tight leading-none"
           >
-            Discover Stunning Destinations
+            Explore Beautiful India
           </motion.h2>
         </div>
 
@@ -85,17 +88,21 @@ const Categories = () => {
                 alt={cat.name} 
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                 referrerPolicy="no-referrer"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
               
               <div className="absolute bottom-0 left-0 p-8 lg:p-10 w-full">
+                <span className="text-white/60 text-xs uppercase tracking-wider mb-2 block">
+                  {cat.region}
+                </span>
                 <h3 className="text-4xl font-serif text-white mb-3 tracking-tight">{cat.name}</h3>
                 <p className="text-white/90 text-[15px] font-medium mb-5">
-                  Price Starts ( {cat.price} )
+                  Starts from {cat.price}
                 </p>
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                   <a href="#" className="text-white text-[15px] font-bold underline underline-offset-[6px] decoration-2 hover:text-[#D4E982] transition-all">
-                    Browse Trips
+                    View Packages
                   </a>
                 </div>
               </div>
@@ -111,7 +118,7 @@ const Categories = () => {
             transition={{ delay: 0.4 }}
             className="bg-[#0D343A] cursor-pointer text-white px-12 py-5 rounded-2xl font-bold text-lg hover:bg-[#D4E982] hover:text-[#0D343A] transition-all shadow-2xl shadow-[#0D343A]/20"
           >
-            Explore All Destinations
+            Explore All Indian Destinations
           </motion.button>
         </div>
       </div>

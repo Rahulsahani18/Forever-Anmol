@@ -6,59 +6,124 @@ const packages = [
   {
     id: 1,
     title: "Udaipur Mountabu Holi Special Trip",
-    price: "6999",
-    duration: "2N3D",
+    price: "6,999",
+    duration: "2N/3D",
     location: "Delhi to Delhi",
     date: "28 Feb, 06 Mar, 13 Mar",
-    image: "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&q=80&w=800"
+    image: "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&q=80&w=800",
+    type: "Holi Special",
+    groupSize: "15-20 People",
+    included: ["Meals", "Transport", "Stay", "Guide"]
   },
   {
     id: 2,
     title: "Mcleodganj Triund Bir Adventure",
-    price: "9999",
-    duration: "3N4D",
+    price: "9,999",
+    duration: "3N/4D",
     location: "Delhi to Delhi",
     date: "28 Feb, 06 Mar, 13 Mar, 20 Mar",
-    image: "https://images.unsplash.com/photo-1589136777351-fdc9c9ca0d3a?auto=format&fit=crop&q=80&w=800"
+    image: "https://b2512768.smushcdn.com/2512768/wp-content/uploads/2025/02/Triund-1-870x555.webp?lossy=2&strip=1&webp=1",
+    type: "Adventure",
+    groupSize: "12-15 People",
+    included: ["Trek Guide", "Camping", "Meals", "Transport"]
   },
   {
     id: 3,
     title: "Mcleodganj Bir Holi Special Trip",
-    price: "7999",
-    duration: "2N3D",
+    price: "7,999",
+    duration: "2N/3D",
     location: "Delhi to Delhi",
     date: "28 Feb, 06 Mar",
-    image: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&q=80&w=800"
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUm-rBmxDkNReYBUTi9DX6me5UwjWTYzkRNA&s",
+    type: "Holi Special",
+    groupSize: "15-20 People",
+    included: ["Meals", "Transport", "Stay", "Holi Celebration"]
   },
   {
     id: 4,
     title: "Triund Trek Holi Special Trip",
-    price: "6499",
-    duration: "2N3D",
+    price: "6,499",
+    duration: "2N/3D",
     location: "Delhi to Delhi",
     date: "28 Feb, 07 Mar",
-    image: "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&q=80&w=800"
+    image: "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&q=80&w=800",
+    type: "Trekking",
+    groupSize: "10-12 People",
+    included: ["Trek Guide", "Camping", "Meals", "Permits"]
   },
   {
     id: 5,
     title: "Kasol Kheerganga Weekend Trek",
-    price: "5499",
-    duration: "2N3D",
+    price: "5,499",
+    duration: "2N/3D",
     location: "Delhi to Delhi",
     date: "Every Weekend",
-    image: "https://images.unsplash.com/photo-1526761122248-c31c93f8b2b9?auto=format&fit=crop&q=80&w=800"
+    image: "https://images.unsplash.com/photo-1526761122248-c31c93f8b2b9?auto=format&fit=crop&q=80&w=800",
+    type: "Weekend Trek",
+    groupSize: "12-15 People",
+    included: ["Trek Guide", "Camping", "Meals", "Transport"]
   },
   {
     id: 6,
     title: "Manali Solang Valley Special",
-    price: "8499",
-    duration: "3N4D",
+    price: "8,499",
+    duration: "3N/4D",
     location: "Delhi to Delhi",
     date: "05 Mar, 12 Mar, 19 Mar",
-    image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80&w=800"
+    image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80&w=800",
+    type: "Snow Adventure",
+    groupSize: "15-20 People",
+    included: ["Snow Activities", "Stay", "Meals", "Transport"]
+  },
+  {
+    id: 7,
+    title: "Rishikesh River Rafting Camping",
+    price: "4,999",
+    duration: "2N/3D",
+    location: "Delhi to Delhi",
+    date: "Every Weekend",
+    image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&q=80&w=800",
+    type: "Adventure",
+    groupSize: "12-15 People",
+    included: ["Rafting", "Camping", "Meals", "Transport"]
+  },
+  {
+    id: 8,
+    title: "Spiti Valley Summer Expedition",
+    price: "18,999",
+    duration: "7N/8D",
+    location: "Delhi to Delhi",
+    date: "Jun - Sep",
+    image: "https://raacho.b-cdn.net/wp-content/uploads/2022/11/Braided-water-channels-of-Spiti-river.jpg",
+    type: "Expedition",
+    groupSize: "10-12 People",
+    included: ["All Meals", "Accommodation", "Transport", "Guide", "Permits"]
+  },
+  {
+    id: 9,
+    title: "Kerala Backwaters Houseboat",
+    price: "14,999",
+    duration: "3N/4D",
+    location: "Cochin to Cochin",
+    date: "Customizable",
+    image: "https://media-cdn.tripadvisor.com/media/attractions-splice-spp-674x446/06/e7/89/dd.jpg",
+    type: "Luxury",
+    groupSize: "2-6 People",
+    included: ["Houseboat Stay", "Meals", "Sightseeing", "Pickup/Drop"]
+  },
+  {
+    id: 10,
+    title: "Goa Beachside Retreat",
+    price: "7,999",
+    duration: "3N/4D",
+    location: "Goa to Goa",
+    date: "Customizable",
+    image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80&w=800",
+    type: "Beach",
+    groupSize: "2-10 People",
+    included: ["Hotel Stay", "Breakfast", "North Goa Tour", "Sunset Cruise"]
   }
 ];
-
 const TrendingPackage = () => {
   const [visibleItems, setVisibleItems] = useState(4);
   // Clone items for infinite effect: [last few, original, first few]
