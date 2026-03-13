@@ -90,18 +90,20 @@ const Categories = () => {
                 referrerPolicy="no-referrer"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
+              {/* Enhanced Dark Overlay - Multiple layers for better text visibility */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
+              <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors duration-500" />
               
-              <div className="absolute bottom-0 left-0 p-8 lg:p-10 w-full">
-                <span className="text-white/60 text-xs uppercase tracking-wider mb-2 block">
+              <div className="absolute bottom-0 left-0 p-8 lg:p-10 w-full z-10">
+                <span className="text-white/80 text-xs uppercase tracking-wider mb-2 block drop-shadow-lg">
                   {cat.region}
                 </span>
-                <h3 className="text-4xl font-serif text-white mb-3 tracking-tight">{cat.name}</h3>
-                <p className="text-white/90 text-[15px] font-medium mb-5">
+                <h3 className="text-4xl font-serif text-white mb-3 tracking-tight drop-shadow-xl">{cat.name}</h3>
+                <p className="text-white/95 text-[15px] font-medium mb-5 drop-shadow-lg">
                   Starts from {cat.price}
                 </p>
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <a href="#" className="text-white text-[15px] font-bold underline underline-offset-[6px] decoration-2 hover:text-[#D4E982] transition-all">
+                  <a href="#" className="text-white text-[15px] font-bold underline underline-offset-[6px] decoration-2 hover:text-[#D4E982] transition-all drop-shadow-md">
                     View Packages
                   </a>
                 </div>
