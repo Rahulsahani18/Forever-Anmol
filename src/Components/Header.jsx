@@ -1,12 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Menu, X, Search, ChevronDown, Mail, Phone, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [activeNestedDropdown, setActiveNestedDropdown] = useState(null);
+  
+  const dropdownTimeoutRef = useRef(null);
+  const nestedDropdownTimeoutRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,13 +33,81 @@ const Header = () => {
     };
   }, [isSearchOpen, isMenuOpen]);
 
+  const handleDropdownEnter = (dropdownName) => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+    }
+    setActiveDropdown(dropdownName);
+  };
+
+  const handleDropdownLeave = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+      setActiveNestedDropdown(null);
+    }, 300); // 300ms delay before closing
+  };
+
+  const handleNestedDropdownEnter = (nestedName) => {
+    if (nestedDropdownTimeoutRef.current) {
+      clearTimeout(nestedDropdownTimeoutRef.current);
+    }
+    setActiveNestedDropdown(nestedName);
+  };
+
+  const handleNestedDropdownLeave = () => {
+    nestedDropdownTimeoutRef.current = setTimeout(() => {
+      setActiveNestedDropdown(null);
+    }, 300); // 300ms delay before closing nested dropdown
+  };
+
+  const packagesDropdown = [
+    'Weekend Trips',
+    'Curated Tours',
+    'Trending Tours',
+    'Forest Safaris',
+    'Treks & Trails',
+    'Honeymoon Tours',
+    'Religious Tours'
+  ];
+
+  const tripsReligiousDropdown = [
+    'Amarnath Yatra',
+    'Vaishno Devi Yatra',
+    'Char Dham Yatra',
+    'Kedarnath Yatra',
+    'Badrinath Yatra',
+    'Gangotri Yatra',
+    'Yamunotri Yatra',
+    'Vrindavan & Mathura',
+    'Varanasi, Ayodhya & Prayagraj',
+    'Haridwar & Rishikesh',
+    'Dwarka & Somnath',
+    '12 Jyotirlingas',
+    'Shirdi Sai',
+    'Religious Places of Uttarakhand',
+    'Religious Places of Himachal Pradesh',
+    'Hemkund Sahib',
+    'Golden Temple'
+  ];
+
   const navItems = [
-    { name: 'Home', dropdown: false },
-    { name: 'About', dropdown: false },
+    { name: 'Home', dropdown: false, url: '/' },
+    { name: 'About', dropdown: false, url: '/about' },
     { name: 'Gallery', dropdown: false },
-    { name: 'Trips', dropdown: true },
+    { 
+      name: 'Trips', 
+      dropdown: true,
+      submenu: [
+        { name: 'Religious Tours', dropdown: true, items: tripsReligiousDropdown }
+      ]
+    },
+    { 
+      name: 'Packages', 
+      dropdown: true,
+      submenu: packagesDropdown
+    },
     { name: 'Upcoming Trips', dropdown: false },
-    { name: 'Contact Us', dropdown: false },
+    { name: 'Contact Us', dropdown: false, url: '/contact' },
   ];
 
   return (
@@ -78,18 +152,79 @@ const Header = () => {
           {/* Desktop Menu */}
           <ul className="hidden lg:flex items-center gap-10">
             {navItems.map((item) => (
-              <li key={item.name} className="group relative">
-                <a href="#" className="text-white text-[15px] font-semibold flex items-center gap-1.5 hover:text-[#D4E982] transition-colors py-2">
+              <li 
+                key={item.name} 
+                className="relative"
+                onMouseEnter={() => item.dropdown && handleDropdownEnter(item.name)}
+                onMouseLeave={handleDropdownLeave}
+              >
+                <Link to={item.url || '#'} className="text-white text-[15px] font-semibold flex items-center gap-1.5 hover:text-[#D4E982] transition-colors py-2 whitespace-nowrap">
                   {item.name}
-                  {item.dropdown && <ChevronDown size={14} className="group-hover:rotate-180 transition-transform duration-300" />}
-                </a>
-                {item.dropdown && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 overflow-hidden">
-                    <ul className="py-3">
-                      <li className="px-6 py-3 hover:bg-[#D4E982]/10 text-gray-800 text-sm font-medium cursor-pointer transition-colors">Luxury Cruises</li>
-                      <li className="px-6 py-3 hover:bg-[#D4E982]/10 text-gray-800 text-sm font-medium cursor-pointer transition-colors">Mountain Treks</li>
-                      <li className="px-6 py-3 hover:bg-[#D4E982]/10 text-gray-800 text-sm font-medium cursor-pointer transition-colors">Beach Getaways</li>
-                    </ul>
+                  {item.dropdown && <ChevronDown size={14} className={`transition-transform duration-300 ${activeDropdown === item.name ? 'rotate-180' : ''}`} />}
+                </Link>
+                
+                {/* Packages Dropdown */}
+                {item.name === 'Packages' && item.dropdown && activeDropdown === 'Packages' && (
+                  <div 
+                    className="absolute top-full left-0 pt-2 w-64"
+                    onMouseEnter={() => handleDropdownEnter('Packages')}
+                    onMouseLeave={handleDropdownLeave}
+                  >
+                    <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+                      <ul className="py-3 max-h-[400px] overflow-y-auto">
+                        {item.submenu.map((pkg, index) => (
+                          <li key={index} className="px-6 py-3 hover:bg-[#D4E982]/10 text-gray-800 text-sm font-medium cursor-pointer transition-colors">
+                            {pkg}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                {/* Trips Dropdown with Religious Tours Submenu */}
+                {item.name === 'Trips' && item.dropdown && activeDropdown === 'Trips' && (
+                  <div 
+                    className="absolute top-full left-0 pt-2 w-72"
+                    onMouseEnter={() => handleDropdownEnter('Trips')}
+                    onMouseLeave={handleDropdownLeave}
+                  >
+                    <div className="bg-white rounded-xl shadow-2xl overflow-visible">
+                      <ul className="py-3">
+                        {item.submenu.map((subItem, index) => (
+                          <li 
+                            key={index} 
+                            className="relative"
+                            onMouseEnter={() => subItem.dropdown && handleNestedDropdownEnter(subItem.name)}
+                            onMouseLeave={handleNestedDropdownLeave}
+                          >
+                            <div className="px-6 py-3 hover:bg-[#D4E982]/10 text-gray-800 text-sm font-medium cursor-pointer transition-colors flex items-center justify-between">
+                              {subItem.name}
+                              {subItem.dropdown && <ChevronDown size={14} className="rotate-[-90deg]" />}
+                            </div>
+                            
+                            {/* Religious Tours Nested Dropdown */}
+                            {subItem.dropdown && activeNestedDropdown === subItem.name && (
+                              <div 
+                                className="absolute left-full top-0 pl-2 w-80"
+                                onMouseEnter={() => handleNestedDropdownEnter(subItem.name)}
+                                onMouseLeave={handleNestedDropdownLeave}
+                              >
+                                <div className="bg-white rounded-xl shadow-2xl max-h-[500px] overflow-y-auto">
+                                  <ul className="py-3">
+                                    {subItem.items.map((trip, tripIndex) => (
+                                      <li key={tripIndex} className="px-6 py-2.5 hover:bg-[#D4E982]/10 text-gray-800 text-sm font-medium cursor-pointer transition-colors border-b border-gray-100 last:border-0">
+                                        {trip}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 )}
               </li>
@@ -97,7 +232,7 @@ const Header = () => {
           </ul>
 
           <div className="flex items-center gap-6">
-            <button className="hidden lg:block bg-[#D4E982] text-black px-8 py-3 rounded-xl font-bold text-sm hover:bg-white transition-all transform hover:scale-105 shadow-lg shadow-[#D4E982]/20">
+            <button className="hidden lg:block cursor-pointer bg-[#D4E982] text-black px-8 py-3 rounded-xl font-bold text-sm hover:bg-white transition-all transform hover:scale-105 shadow-lg shadow-[#D4E982]/20">
               Register Now
             </button>
             <button 
@@ -122,15 +257,63 @@ const Header = () => {
               initial={{ opacity: 0, x: '100%' }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: '100%' }}
-              className="fixed inset-0 z-[110] lg:hidden bg-black flex flex-col pt-32 px-10"
+              className="fixed inset-0 z-[110] lg:hidden bg-black flex flex-col pt-32 px-10 overflow-y-auto"
             >
-              <ul className="flex flex-col gap-8">
+              <ul className="flex flex-col gap-6">
                 {navItems.map((item) => (
                   <li key={item.name}>
-                    <a href="#" className="text-white text-3xl font-bold flex justify-between items-center hover:text-[#D4E982] transition-colors">
-                      {item.name}
-                      {item.dropdown && <ChevronDown size={24} />}
-                    </a>
+                    {item.dropdown ? (
+                      <details className="text-white">
+                        <summary className="text-white text-2xl font-bold flex items-center justify-between hover:text-[#D4E982] transition-colors cursor-pointer list-none">
+                          {item.name}
+                          <ChevronDown size={20} className="details-chevron" />
+                        </summary>
+                        
+                        {/* Mobile Packages Dropdown */}
+                        {item.name === 'Packages' && item.submenu && (
+                          <ul className="mt-4 ml-4 space-y-3">
+                            {item.submenu.map((pkg, index) => (
+                              <li key={index} className="text-white/80 text-lg hover:text-[#D4E982] transition-colors cursor-pointer">
+                                {pkg}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+
+                        {/* Mobile Trips Dropdown with Religious Tours */}
+                        {item.name === 'Trips' && item.submenu && (
+                          <ul className="mt-4 ml-4 space-y-3">
+                            {item.submenu.map((subItem, index) => (
+                              <li key={index}>
+                                {subItem.dropdown ? (
+                                  <details>
+                                    <summary className="text-white/80 text-lg hover:text-[#D4E982] transition-colors cursor-pointer list-none flex items-center justify-between">
+                                      {subItem.name}
+                                      <ChevronDown size={16} className="details-chevron" />
+                                    </summary>
+                                    <ul className="mt-3 ml-4 space-y-2">
+                                      {subItem.items.map((trip, tripIndex) => (
+                                        <li key={tripIndex} className="text-white/60 text-base hover:text-[#D4E982] transition-colors cursor-pointer py-1">
+                                          {trip}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </details>
+                                ) : (
+                                  <span className="text-white/80 text-lg hover:text-[#D4E982] transition-colors cursor-pointer">
+                                    {subItem.name}
+                                  </span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </details>
+                    ) : (
+                      <Link to={item.url || '#'} className="text-white text-2xl font-bold hover:text-[#D4E982] transition-colors">
+                        {item.name}
+                      </Link>
+                    )}
                   </li>
                 ))}
                 <li className="pt-10">

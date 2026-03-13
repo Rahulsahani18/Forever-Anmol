@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import { Link } from 'react-router-dom';
 
 const categories = [
   {
@@ -103,9 +104,9 @@ const Categories = () => {
                   Starts from {cat.price}
                 </p>
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <a href="#" className="text-white text-[15px] font-bold underline underline-offset-[6px] decoration-2 hover:text-[#D4E982] transition-all drop-shadow-md">
+                  <Link to={`/tour/${cat.id}`} className="text-white text-[15px] font-bold underline underline-offset-[6px] decoration-2 hover:text-[#D4E982] transition-all drop-shadow-md">
                     View Packages
-                  </a>
+                  </Link>
                 </div>
               </div>
             </motion.div>
