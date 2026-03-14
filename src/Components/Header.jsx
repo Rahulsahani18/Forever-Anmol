@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { Menu, X, Search, ChevronDown, Mail, Phone, Globe } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Link } from 'react-router-dom';
+import logo from '../assets/logo.png';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,7 +11,7 @@ const Header = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [activeNestedDropdown, setActiveNestedDropdown] = useState(null);
-  
+
   const dropdownTimeoutRef = useRef(null);
   const nestedDropdownTimeoutRef = useRef(null);
 
@@ -61,13 +62,13 @@ const Header = () => {
   };
 
   const packagesDropdown = [
-    'Weekend Trips',
-    'Curated Tours',
-    'Trending Tours',
-    'Forest Safaris',
-    'Treks & Trails',
-    'Honeymoon Tours',
-    'Religious Tours'
+    { name: 'Weekend Trips', url: '/package-details' },
+    { name: 'Curated Tours', url: '/package-details' },
+    { name: 'Trending Tours', url: '/package-details' },
+    { name: 'Forest Safaris', url: '/package-details' },
+    { name: 'Treks & Trails', url: '/package-details' },
+    { name: 'Honeymoon Tours', url: '/package-details' },
+    { name: 'Religious Tours', url: '/package-details' }
   ];
 
   const tripsReligiousDropdown = [
@@ -93,16 +94,16 @@ const Header = () => {
   const navItems = [
     { name: 'Home', dropdown: false, url: '/' },
     { name: 'About', dropdown: false, url: '/about' },
-    { name: 'Gallery', dropdown: false },
-    { 
-      name: 'Trips', 
+    // { name: 'Gallery', dropdown: false },
+    {
+      name: 'Trips',
       dropdown: true,
       submenu: [
         { name: 'Religious Tours', dropdown: true, items: tripsReligiousDropdown }
       ]
     },
-    { 
-      name: 'Packages', 
+    {
+      name: 'Packages',
       dropdown: true,
       submenu: packagesDropdown
     },
@@ -143,17 +144,17 @@ const Header = () => {
         {/* Main Nav */}
         <nav className="container mx-auto px-8 flex justify-between items-center">
           <div className="ForeverA-logo flex items-center gap-3">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center overflow-hidden border-2 border-[#D4E982]">
-               <img src="https://picsum.photos/seed/travel/100/100" alt="Logo" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+            <div className="w-15 h-15 bg-white rounded-full flex items-center justify-center overflow-hidden border-2 border-[#D4E982]">
+              <img src={logo} alt="Logo" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
             </div>
-            <span className="text-white text-3xl font-bold tracking-tighter">Forever</span>
+            {/* <span className="text-white text-3xl font-bold tracking-tighter">Forever</span> */}
           </div>
 
           {/* Desktop Menu */}
           <ul className="hidden lg:flex items-center gap-10">
             {navItems.map((item) => (
-              <li 
-                key={item.name} 
+              <li
+                key={item.name}
                 className="relative"
                 onMouseEnter={() => item.dropdown && handleDropdownEnter(item.name)}
                 onMouseLeave={handleDropdownLeave}
@@ -162,10 +163,10 @@ const Header = () => {
                   {item.name}
                   {item.dropdown && <ChevronDown size={14} className={`transition-transform duration-300 ${activeDropdown === item.name ? 'rotate-180' : ''}`} />}
                 </Link>
-                
+
                 {/* Packages Dropdown */}
                 {item.name === 'Packages' && item.dropdown && activeDropdown === 'Packages' && (
-                  <div 
+                  <div
                     className="absolute top-full left-0 pt-2 w-64"
                     onMouseEnter={() => handleDropdownEnter('Packages')}
                     onMouseLeave={handleDropdownLeave}
@@ -173,8 +174,13 @@ const Header = () => {
                     <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
                       <ul className="py-3 max-h-[400px] overflow-y-auto">
                         {item.submenu.map((pkg, index) => (
-                          <li key={index} className="px-6 py-3 hover:bg-[#D4E982]/10 text-gray-800 text-sm font-medium cursor-pointer transition-colors">
-                            {pkg}
+                          <li key={index}>
+                            <Link
+                              to={pkg.url}
+                              className="block px-6 py-3 hover:bg-[#D4E982]/10 text-gray-800 text-sm font-medium cursor-pointer transition-colors"
+                            >
+                              {pkg.name}
+                            </Link>
                           </li>
                         ))}
                       </ul>
@@ -184,7 +190,7 @@ const Header = () => {
 
                 {/* Trips Dropdown with Religious Tours Submenu */}
                 {item.name === 'Trips' && item.dropdown && activeDropdown === 'Trips' && (
-                  <div 
+                  <div
                     className="absolute top-full left-0 pt-2 w-72"
                     onMouseEnter={() => handleDropdownEnter('Trips')}
                     onMouseLeave={handleDropdownLeave}
@@ -192,8 +198,8 @@ const Header = () => {
                     <div className="bg-white rounded-xl shadow-2xl overflow-visible">
                       <ul className="py-3">
                         {item.submenu.map((subItem, index) => (
-                          <li 
-                            key={index} 
+                          <li
+                            key={index}
                             className="relative"
                             onMouseEnter={() => subItem.dropdown && handleNestedDropdownEnter(subItem.name)}
                             onMouseLeave={handleNestedDropdownLeave}
@@ -202,10 +208,10 @@ const Header = () => {
                               {subItem.name}
                               {subItem.dropdown && <ChevronDown size={14} className="rotate-[-90deg]" />}
                             </div>
-                            
+
                             {/* Religious Tours Nested Dropdown */}
                             {subItem.dropdown && activeNestedDropdown === subItem.name && (
-                              <div 
+                              <div
                                 className="absolute left-full top-0 pl-2 w-80"
                                 onMouseEnter={() => handleNestedDropdownEnter(subItem.name)}
                                 onMouseLeave={handleNestedDropdownLeave}
@@ -235,13 +241,13 @@ const Header = () => {
             <button className="hidden lg:block cursor-pointer bg-[#D4E982] text-black px-8 py-3 rounded-xl font-bold text-sm hover:bg-white transition-all transform hover:scale-105 shadow-lg shadow-[#D4E982]/20">
               Register Now
             </button>
-            <button 
+            <button
               onClick={() => setIsSearchOpen(true)}
               className="w-12 h-12 bg-[#D4E982] cursor-pointer text-black flex items-center justify-center rounded-xl hover:bg-white transition-all transform hover:rotate-12"
             >
               <Search size={22} />
             </button>
-            <button 
+            <button
               className="lg:hidden text-white"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
@@ -268,13 +274,18 @@ const Header = () => {
                           {item.name}
                           <ChevronDown size={20} className="details-chevron" />
                         </summary>
-                        
+
                         {/* Mobile Packages Dropdown */}
                         {item.name === 'Packages' && item.submenu && (
                           <ul className="mt-4 ml-4 space-y-3">
                             {item.submenu.map((pkg, index) => (
-                              <li key={index} className="text-white/80 text-lg hover:text-[#D4E982] transition-colors cursor-pointer">
-                                {pkg}
+                              <li key={index}>
+                                <Link
+                                  to={pkg.url}
+                                  className="text-white/80 text-lg hover:text-[#D4E982] transition-colors cursor-pointer block"
+                                >
+                                  {pkg.name}
+                                </Link>
                               </li>
                             ))}
                           </ul>
@@ -344,7 +355,7 @@ const Header = () => {
                 transition={{ delay: 0.1 }}
                 className="w-full max-w-4xl relative"
               >
-                <button 
+                <button
                   onClick={() => setIsSearchOpen(false)}
                   className="absolute -top-24 right-0 text-white hover:text-[#D4E982] transition-colors"
                 >
@@ -352,9 +363,9 @@ const Header = () => {
                 </button>
                 <h2 className="text-white text-4xl md:text-6xl font-serif mb-12 text-center">Search Destinations</h2>
                 <div className="relative">
-                  <input 
+                  <input
                     autoFocus
-                    type="text" 
+                    type="text"
                     placeholder="Where do you want to go?"
                     className="w-full bg-transparent border-b-4 border-white/20 py-6 text-3xl md:text-5xl text-white placeholder:text-white/20 focus:outline-none focus:border-[#D4E982] transition-colors"
                   />

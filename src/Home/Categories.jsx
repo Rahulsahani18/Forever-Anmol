@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const categories = [
   {
@@ -33,6 +33,9 @@ const categories = [
 ];
 
 const Categories = () => {
+
+const navigate = useNavigate();
+
   return (
     <section className="ForeverA-categories relative py-32 bg-[#EBF7F7] overflow-hidden">
       {/* Topographic Background Pattern */}
@@ -104,7 +107,7 @@ const Categories = () => {
                   Starts from {cat.price}
                 </p>
                 <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <Link to={`/tour/${cat.id}`} className="text-white text-[15px] font-bold underline underline-offset-[6px] decoration-2 hover:text-[#D4E982] transition-all drop-shadow-md">
+                  <Link to="/tour-details" className="text-white text-[15px] font-bold underline underline-offset-[6px] decoration-2 hover:text-[#D4E982] transition-all drop-shadow-md">
                     View Packages
                   </Link>
                 </div>
@@ -120,6 +123,7 @@ const Categories = () => {
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
             className="bg-[#0D343A] cursor-pointer text-white px-12 py-5 rounded-2xl font-bold text-lg hover:bg-[#D4E982] hover:text-[#0D343A] transition-all shadow-2xl shadow-[#0D343A]/20"
+            onClick={() => navigate('/all-destinations')}
           >
             Explore All Indian Destinations
           </motion.button>

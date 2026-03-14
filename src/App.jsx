@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { ChevronUp } from 'lucide-react';
 
 // Components
@@ -8,6 +8,8 @@ import Footer from './Components/Footer';
 import Contact from './Pages/Contact';
 import About from './Pages/About';
 import TourDetailing from './Components/TourDetails';
+import PackageDetailing from './Components/PackagesDetails';
+import AllDestinations from './Components/AllDestinations';
 
 // Home Section Components
 import Hero from './Home/Hero';
@@ -17,6 +19,20 @@ import TrendingPackages from './Home/TrendingPackages';
 import States from './Home/States';
 import JourneyNumbers from './Home/JourneyNumbers';
 import Blog from './Home/Blog';
+
+// ScrollToTop component with smooth scroll
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }, [pathname]);
+
+  return null;
+};
 
 export default function App() {
   const [showScroll, setShowScroll] = React.useState(false);
@@ -39,6 +55,7 @@ export default function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="ForeverA-app min-h-screen bg-black">
         <Header />
         
@@ -59,7 +76,9 @@ export default function App() {
           />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
-          <Route path="/tour/:id" element={<TourDetailing />} />
+          <Route path="/tour-details" element={<TourDetailing />} />
+          <Route path="/package-details" element={<PackageDetailing />} />
+          <Route path="/all-destinations" element={<AllDestinations />} />
         </Routes>
 
         <Footer />

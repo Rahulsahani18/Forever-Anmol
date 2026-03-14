@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useNavigate } from 'react-router-dom';
 import {
   Clock,
   MapPin,
@@ -35,7 +36,7 @@ const TourDetailing = () => {
   const [activeTab, setActiveTab] = useState('description');
   const [openDay, setOpenDay] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null);
-
+  const navigate = useNavigate();
   const tabs = [
     { id: 'description', label: 'Overview' },
     { id: 'itinerary', label: 'Itinerary' },
@@ -625,7 +626,7 @@ const TourDetailing = () => {
           </div>
 
           <div className="mt-20 flex justify-center">
-            <button className="bg-[#1B3D39] text-white px-12 py-5 rounded-2xl font-bold text-lg hover:bg-[#D4E982] hover:text-[#1B3D39] transition-all shadow-2xl shadow-[#1B3D39]/20">
+            <button onClick={() => navigate('/all-destinations')} className="bg-[#1B3D39] cursor-pointer text-white px-12 py-5 rounded-2xl font-bold text-lg hover:bg-[#D4E982] hover:text-[#1B3D39] transition-all shadow-2xl shadow-[#1B3D39]/20">
               Explore All Destinations
             </button>
           </div>
