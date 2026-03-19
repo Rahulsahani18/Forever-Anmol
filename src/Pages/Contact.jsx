@@ -166,7 +166,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="text-2xl font-serif text-[#1B3D39] mb-2">Territorial Office</h3>
-                      <p className="text-[#1B3D39]/60 leading-relaxed">No: 58 A, East Madison Street, Baltimore, MD, USA 4508</p>
+                      <p className="text-[#1B3D39]/60 leading-relaxed">25/23 First Floor, Tilak Nagar, New Delhi 110018, INDIA</p>
                     </div>
                   </div>
 
@@ -177,7 +177,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="text-2xl font-serif text-[#1B3D39] mb-2">Talk To Us</h3>
-                      <p className="text-[#1B3D39]/60 leading-relaxed">+00 -123456789 / +123-47895600</p>
+                      <p className="text-[#1B3D39]/60 leading-relaxed">+ 91 9717 726 736</p>
                     </div>
                   </div>
 
@@ -188,7 +188,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="text-2xl font-serif text-[#1B3D39] mb-2">Let's Chat</h3>
-                      <p className="text-[#1B3D39]/60 leading-relaxed">contact@example.com / support@example.com</p>
+                      <p className="text-[#1B3D39]/60 leading-relaxed">info@anmoltrips.com</p>
                     </div>
                   </div>
 
