@@ -10,9 +10,9 @@ const Contact = () => {
       <section className="relative h-[450px] flex items-center overflow-hidden">
         {/* Background Image with Dark Teal Overlay */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&q=80&w=2000" 
-            alt="Contact Banner" 
+          <img
+            src="https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&q=80&w=2000"
+            alt="Contact Banner"
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
           />
@@ -20,14 +20,14 @@ const Contact = () => {
         </div>
 
         <div className="w-[90%] mx-auto relative z-10 pt-20">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-6xl md:text-8xl font-serif text-white mb-6"
           >
             Contact Us
           </motion.h1>
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
@@ -44,7 +44,7 @@ const Contact = () => {
       <section className="py-24">
         <div className="w-[90%] mx-auto">
           <div className="flex flex-col lg:flex-row gap-16">
-            
+
             {/* Left Column: Form */}
             <div className="lg:w-[60%]">
               <motion.div
@@ -52,9 +52,11 @@ const Contact = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
               >
-                <h2 className="text-4xl md:text-5xl font-serif text-[#1B3D39] mb-6">Contact Us Today</h2>
+                <h2 className="text-4xl md:text-5xl font-serif text-[#1B3D39] mb-6">
+                  Ready to Start Your Journey?
+                </h2>
                 <p className="text-[#1B3D39]/60 leading-relaxed mb-12 max-w-2xl">
-                  Curabitur porta quis facilisis per donec mattis nunc hendrerit malesuada parturient ac. Eu lacus natoque morbi ipsum tempor semper vulputate.
+                  Have questions about your dream destination? Our travel experts are here to help you plan the perfect getaway. Whether it's a family vacation, romantic escape, or adventure trip, we'll craft an unforgettable experience tailored just for you.
                 </p>
 
                 <form className="space-y-8" onSubmit={(e) => e.preventDefault()}>
@@ -62,8 +64,8 @@ const Contact = () => {
                     {/* Name */}
                     <div className="space-y-3">
                       <label className="text-lg font-serif text-[#1B3D39] block">Your Name*</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         placeholder="Full Name"
                         className="w-full bg-white border border-[#1B3D39]/10 rounded-xl px-6 py-4 focus:outline-none focus:border-[#D4E982] transition-colors shadow-sm"
                       />
@@ -71,8 +73,8 @@ const Contact = () => {
                     {/* Phone */}
                     <div className="space-y-3">
                       <label className="text-lg font-serif text-[#1B3D39] block">Phone Number*</label>
-                      <input 
-                        type="tel" 
+                      <input
+                        type="tel"
                         placeholder="Phone Number"
                         className="w-full bg-white border border-[#1B3D39]/10 rounded-xl px-6 py-4 focus:outline-none focus:border-[#D4E982] transition-colors shadow-sm"
                       />
@@ -80,8 +82,8 @@ const Contact = () => {
                     {/* Email */}
                     <div className="space-y-3">
                       <label className="text-lg font-serif text-[#1B3D39] block">Email ID*</label>
-                      <input 
-                        type="email" 
+                      <input
+                        type="email"
                         placeholder="Mail Address"
                         className="w-full bg-white border border-[#1B3D39]/10 rounded-xl px-6 py-4 focus:outline-none focus:border-[#D4E982] transition-colors shadow-sm"
                       />
@@ -89,8 +91,8 @@ const Contact = () => {
                     {/* Date */}
                     <div className="space-y-3">
                       <label className="text-lg font-serif text-[#1B3D39] block">Date To Travel*</label>
-                      <input 
-                        type="text" 
+                      <input
+                        type="text"
                         placeholder="Pick the Date"
                         onFocus={(e) => (e.target.type = "date")}
                         onBlur={(e) => (e.target.type = "text")}
@@ -155,7 +157,7 @@ const Contact = () => {
                   We'd Love To Hear
                 </h2>
                 <p className="text-[#1B3D39]/60 leading-relaxed mb-12">
-                  Gravida sed sem aliquam venenatis; habitant accumsan natoque suspendisse metus ut. Mus lacinia commodo et etiam nascetur.
+                  Share your travel dreams with us! Whether it's a quick question or a detailed itinerary request, our travel experts are ready to help you plan the perfect journey.
                 </p>
 
                 <div className="space-y-10">
@@ -166,7 +168,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="text-2xl font-serif text-[#1B3D39] mb-2">Territorial Office</h3>
-                      <p className="text-[#1B3D39]/60 leading-relaxed">No: 58 A, East Madison Street, Baltimore, MD, USA 4508</p>
+                      <p className="text-[#1B3D39]/60 leading-relaxed">25/23 First Floor, Tilak Nagar, New Delhi 110018, INDIA</p>
                     </div>
                   </div>
 
@@ -177,7 +179,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="text-2xl font-serif text-[#1B3D39] mb-2">Talk To Us</h3>
-                      <p className="text-[#1B3D39]/60 leading-relaxed">+00 -123456789 / +123-47895600</p>
+                      <p className="text-[#1B3D39]/60 leading-relaxed">+91 9717726736</p>
                     </div>
                   </div>
 
@@ -188,7 +190,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="text-2xl font-serif text-[#1B3D39] mb-2">Let's Chat</h3>
-                      <p className="text-[#1B3D39]/60 leading-relaxed">contact@example.com / support@example.com</p>
+                      <p className="text-[#1B3D39]/60 leading-relaxed">info@anmoltrips.com</p>
                     </div>
                   </div>
 
@@ -211,13 +213,13 @@ const Contact = () => {
       </section>
       {/* Google Map Section */}
       <section className="w-full h-[500px] relative overflow-hidden">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d423286.27404345275!2d-118.69191921441556!3d34.02016130939095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c75dd41d54b1%3A0x4a29186d72941022!2sLos%20Angeles%2C%20CA!5e0!3m2!1sen!2sus!4v1710312137000!5m2!1sen!2sus" 
-          width="100%" 
-          height="100%" 
-          style={{ border: 0 }} 
-          allowFullScreen="" 
-          loading="lazy" 
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d423286.27404345275!2d-118.69191921441556!3d34.02016130939095!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80c2c75dd41d54b1%3A0x4a29186d72941022!2sLos%20Angeles%2C%20CA!5e0!3m2!1sen!2sus!4v1710312137000!5m2!1sen!2sus"
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen=""
+          loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
           className="grayscale hover:grayscale-0 transition-all duration-700"
         ></iframe>

@@ -1,136 +1,78 @@
+// src/Home/TrendingPackage.jsx
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { MapPin, Clock, Calendar, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
+import PlaceHolder from '../assets/elementor-placeholder-image.png';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
-const packages = [
-  {
-    id: 1,
-    title: "Udaipur Mountabu Holi Special Trip",
-    price: "6,999",
-    duration: "2N/3D",
-    location: "Delhi to Delhi",
-    date: "28 Feb, 06 Mar, 13 Mar",
-    image: "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&q=80&w=800",
-    type: "Holi Special",
-    groupSize: "15-20 People",
-    included: ["Meals", "Transport", "Stay", "Guide"]
-  },
-  {
-    id: 2,
-    title: "Mcleodganj Triund Bir Adventure",
-    price: "9,999",
-    duration: "3N/4D",
-    location: "Delhi to Delhi",
-    date: "28 Feb, 06 Mar, 13 Mar, 20 Mar",
-    image: "https://b2512768.smushcdn.com/2512768/wp-content/uploads/2025/02/Triund-1-870x555.webp?lossy=2&strip=1&webp=1",
-    type: "Adventure",
-    groupSize: "12-15 People",
-    included: ["Trek Guide", "Camping", "Meals", "Transport"]
-  },
-  {
-    id: 3,
-    title: "Mcleodganj Bir Holi Special Trip",
-    price: "7,999",
-    duration: "2N/3D",
-    location: "Delhi to Delhi",
-    date: "28 Feb, 06 Mar",
-    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUm-rBmxDkNReYBUTi9DX6me5UwjWTYzkRNA&s",
-    type: "Holi Special",
-    groupSize: "15-20 People",
-    included: ["Meals", "Transport", "Stay", "Holi Celebration"]
-  },
-  {
-    id: 4,
-    title: "Triund Trek Holi Special Trip",
-    price: "6,499",
-    duration: "2N/3D",
-    location: "Delhi to Delhi",
-    date: "28 Feb, 07 Mar",
-    image: "https://images.unsplash.com/photo-1596895111956-bf1cf0599ce5?auto=format&fit=crop&q=80&w=800",
-    type: "Trekking",
-    groupSize: "10-12 People",
-    included: ["Trek Guide", "Camping", "Meals", "Permits"]
-  },
-  {
-    id: 5,
-    title: "Kasol Kheerganga Weekend Trek",
-    price: "5,499",
-    duration: "2N/3D",
-    location: "Delhi to Delhi",
-    date: "Every Weekend",
-    image: "https://images.unsplash.com/photo-1526761122248-c31c93f8b2b9?auto=format&fit=crop&q=80&w=800",
-    type: "Weekend Trek",
-    groupSize: "12-15 People",
-    included: ["Trek Guide", "Camping", "Meals", "Transport"]
-  },
-  {
-    id: 6,
-    title: "Manali Solang Valley Special",
-    price: "8,499",
-    duration: "3N/4D",
-    location: "Delhi to Delhi",
-    date: "05 Mar, 12 Mar, 19 Mar",
-    image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80&w=800",
-    type: "Snow Adventure",
-    groupSize: "15-20 People",
-    included: ["Snow Activities", "Stay", "Meals", "Transport"]
-  },
-  {
-    id: 7,
-    title: "Rishikesh River Rafting Camping",
-    price: "4,999",
-    duration: "2N/3D",
-    location: "Delhi to Delhi",
-    date: "Every Weekend",
-    image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&q=80&w=800",
-    type: "Adventure",
-    groupSize: "12-15 People",
-    included: ["Rafting", "Camping", "Meals", "Transport"]
-  },
-  {
-    id: 8,
-    title: "Spiti Valley Summer Expedition",
-    price: "18,999",
-    duration: "7N/8D",
-    location: "Delhi to Delhi",
-    date: "Jun - Sep",
-    image: "https://raacho.b-cdn.net/wp-content/uploads/2022/11/Braided-water-channels-of-Spiti-river.jpg",
-    type: "Expedition",
-    groupSize: "10-12 People",
-    included: ["All Meals", "Accommodation", "Transport", "Guide", "Permits"]
-  },
-  {
-    id: 9,
-    title: "Kerala Backwaters Houseboat",
-    price: "14,999",
-    duration: "3N/4D",
-    location: "Cochin to Cochin",
-    date: "Customizable",
-    image: "https://media-cdn.tripadvisor.com/media/attractions-splice-spp-674x446/06/e7/89/dd.jpg",
-    type: "Luxury",
-    groupSize: "2-6 People",
-    included: ["Houseboat Stay", "Meals", "Sightseeing", "Pickup/Drop"]
-  },
-  {
-    id: 10,
-    title: "Goa Beachside Retreat",
-    price: "7,999",
-    duration: "3N/4D",
-    location: "Goa to Goa",
-    date: "Customizable",
-    image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80&w=800",
-    type: "Beach",
-    groupSize: "2-10 People",
-    included: ["Hotel Stay", "Breakfast", "North Goa Tour", "Sunset Cruise"]
-  }
-];
 const TrendingPackage = () => {
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [visibleItems, setVisibleItems] = useState(4);
+  
   // Clone items for infinite effect: [last few, original, first few]
-  const clonedPackages = [...packages.slice(-4), ...packages, ...packages.slice(0, 4)];
+  const [clonedPackages, setClonedPackages] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(4); // Start at the first real item
   const [isTransitioning, setIsTransitioning] = useState(true);
   const containerRef = useRef(null);
+
+  // Fetch trending packages from API
+  useEffect(() => {
+    const fetchTrendingPackages = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('/api/trending');
+        
+        if (response.data && response.data.status === 200) {
+          // Format the data to match your component's expected structure
+          const formattedPackages = response.data.data.map(pkg => {
+            let dateString = '';
+            if (pkg.dates && pkg.dates.length > 0) {
+              const formattedDates = pkg.dates.map(d => {
+                const date = new Date(d.departure_date);
+                return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+              });
+              dateString = formattedDates.join(', ');
+            }
+            
+            return {
+              id: pkg.id,
+              title: pkg.title,
+              price: parseInt(pkg.discount_price).toLocaleString(),
+              duration: pkg.duration,
+              location: pkg.location,
+              date: dateString || pkg.seasonal_availability || 'Available Now',
+              image: pkg.hero_image,
+              type: pkg.category_name,
+              groupSize: pkg.min_guests,
+              slug: pkg.slug,
+              price_original: pkg.price,
+              discount_price: pkg.discount_price
+            };
+          });
+          
+          setPackages(formattedPackages);
+        }
+      } catch (error) {
+        console.error('Error fetching trending packages:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchTrendingPackages();
+  }, []);
+
+  // Update cloned packages whenever packages change
+  useEffect(() => {
+    if (packages.length > 0) {
+      // Clone items for infinite effect: [last few, original, first few]
+      setClonedPackages([...packages.slice(-4), ...packages, ...packages.slice(0, 4)]);
+      // Reset current index to the first real item
+      setCurrentIndex(4);
+    }
+  }, [packages]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -148,12 +90,12 @@ const TrendingPackage = () => {
   const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || loading || packages.length === 0) return;
     const interval = setInterval(() => {
       nextSlide();
     }, 2000);
     return () => clearInterval(interval);
-  }, [isPaused, currentIndex]);
+  }, [isPaused, currentIndex, loading, packages.length]);
 
   const nextSlide = () => {
     setCurrentIndex(prev => prev + 1);
@@ -163,8 +105,9 @@ const TrendingPackage = () => {
     setCurrentIndex(prev => prev - 1);
   };
 
-  // Handle the jump for infinite effect
+  // Handle the jump for infinite effect - SAME AS YOUR ORIGINAL WORKING CODE
   useEffect(() => {
+    if (packages.length === 0) return;
     let timeout;
     if (currentIndex >= packages.length + 4) {
       timeout = setTimeout(() => {
@@ -181,6 +124,60 @@ const TrendingPackage = () => {
     }
     return () => clearTimeout(timeout);
   }, [currentIndex, packages.length]);
+
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return PlaceHolder;
+    if (imagePath.startsWith('http')) return imagePath;
+    return `https://test.zeezapperal.com/${imagePath}`;
+  };
+
+  if (loading) {
+    return (
+      <section className="ForeverA-trending py-32 bg-white overflow-hidden">
+        <div className="w-[90%] mx-auto">
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center">
+              <div className="w-16 h-16 border-4 border-[#D4E982] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-[#1B3D39]">Loading trending packages...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (packages.length === 0) {
+    return (
+      <section className="ForeverA-trending py-32 bg-white overflow-hidden">
+        <div className="w-[90%] mx-auto">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
+            <div className="max-w-2xl">
+              <motion.span 
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                className="text-[11px] font-bold tracking-[0.4em] text-[#1B3D39]/50 uppercase mb-6 block"
+              >
+                Our Most Popular Tours
+              </motion.span>
+              <motion.h2 
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="text-5xl md:text-7xl font-serif text-[#1B3D39] tracking-tight leading-none"
+              >
+                Trending Packages
+              </motion.h2>
+            </div>
+          </div>
+          <div className="text-center py-20">
+            <p className="text-[#1B3D39]/60">No trending packages available at the moment.</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="ForeverA-trending py-32 bg-white overflow-hidden">
@@ -238,63 +235,69 @@ const TrendingPackage = () => {
                 className="flex-shrink-0"
                 style={{ width: `calc((100% - ${(visibleItems - 1) * (visibleItems === 4 ? 24 : 32)}px) / ${visibleItems})` }}
               >
-                <motion.div 
-                  className="group cursor-pointer"
-                  whileHover={{ y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  {/* Image Container */}
-                  <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden mb-6 shadow-xl">
-                    <img 
-                      src={pkg.image} 
-                      alt={pkg.title} 
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                      referrerPolicy="no-referrer"
-                    />
-                    
-                    {/* Badges */}
-                    <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
-                      <div className="bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-full text-[10px] font-bold flex items-center gap-2 border border-white/20">
-                        <MapPin size={12} className="text-[#D4E982]" />
-                        {pkg.location}
-                      </div>
-                      <div className="bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-full text-[10px] font-bold flex items-center gap-2 border border-white/20">
-                        <Clock size={12} className="text-[#D4E982]" />
-                        {pkg.duration}
+                <Link to={`/tour-details/${pkg.slug}`}>
+                  <motion.div 
+                    className="group cursor-pointer"
+                    whileHover={{ y: -10 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {/* Image Container */}
+                    <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden mb-6 shadow-xl">
+                      <img 
+                        src={getImageUrl(pkg.image)} 
+                        alt={pkg.title} 
+                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                        referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          e.target.src = PlaceHolder;
+                        }}
+                      />
+                      
+                      {/* Badges */}
+                      <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+                        <div className="bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-full text-[10px] font-bold flex items-center gap-2 border border-white/20">
+                          <MapPin size={12} className="text-[#D4E982]" />
+                          {pkg.location}
+                        </div>
+                        <div className="bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-full text-[10px] font-bold flex items-center gap-2 border border-white/20">
+                          <Clock size={12} className="text-[#D4E982]" />
+                          {pkg.duration}
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Content */}
-                  <div className="px-2">
-                    <div className="flex items-center gap-2 text-[#1B3D39]/60 text-xs font-bold mb-3">
-                      <Calendar size={14} className="text-[#1B3D39]" />
-                      {pkg.date}
-                    </div>
-                    <h3 className="text-2xl font-serif text-[#1B3D39] mb-4 leading-tight group-hover:text-[#D4E982] transition-colors">
-                      {pkg.title}
-                    </h3>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <span className="text-xs text-[#1B3D39]/50 font-bold block uppercase tracking-wider">Starts at</span>
-                        <span className="text-2xl font-bold text-[#1B3D39]">₹ {pkg.price} /-</span>
+                    {/* Content */}
+                    <div className="px-2">
+                      <div className="flex items-center gap-2 text-[#1B3D39]/60 text-xs font-bold mb-3">
+                        <Calendar size={14} className="text-[#1B3D39]" />
+                        {pkg.date}
                       </div>
-                      <div className="w-12 h-12 rounded-full bg-[#EBF7F7] flex items-center justify-center text-[#1B3D39] group-hover:bg-[#D4E982] transition-all">
-                        <ArrowRight size={20} />
+                      <h3 className="text-2xl font-serif text-[#1B3D39] mb-4 leading-tight group-hover:text-[#D4E982] transition-colors line-clamp-2">
+                        {pkg.title}
+                      </h3>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-xs text-[#1B3D39]/50 font-bold block uppercase tracking-wider">Starts at</span>
+                          <span className="text-2xl font-bold text-[#1B3D39]">₹ {pkg.price} /-</span>
+                        </div>
+                        <div className="w-12 h-12 rounded-full bg-[#EBF7F7] flex items-center justify-center text-[#1B3D39] group-hover:bg-[#D4E982] transition-all">
+                          <ArrowRight size={20} />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </motion.div>
+                  </motion.div>
+                </Link>
               </div>
             ))}
           </motion.div>
         </div>
 
         <div className="mt-20 flex justify-center">
-           <motion.button
+          <motion.button
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            onClick={() => window.location.href = '/packages'}
             className="group flex items-center cursor-pointer gap-4 bg-[#1B3D39] text-white px-10 py-5 rounded-2xl font-bold text-lg hover:bg-[#D4E982] hover:text-[#1B3D39] transition-all shadow-2xl shadow-[#1B3D39]/20"
           >
             View All Packages

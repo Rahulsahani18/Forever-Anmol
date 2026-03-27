@@ -1,46 +1,69 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Plus } from 'lucide-react';
+  
+import HeroImg1 from '../assets/Hero1.avif';
+import HeroImg2 from '../assets/Hero2.avif';
+import HeroImg3 from '../assets/Hero3.avif';
+import HeroImg4 from '../assets/Hero4.avif';
+
+
+import HeroGalleryImg1 from '../assets/HeroGallery1.avif';
+import HeroGalleryImg2 from '../assets/HeroGallery2.avif';
+import HeroGalleryImg3 from '../assets/HeroGallery3.avif';
+
+
+import Hero2GalleryImg1 from '../assets/Hero2Gallery1.avif';
+import Hero2GalleryImg2 from '../assets/Hero2Gallery2.avif';
+import Hero2GalleryImg3 from '../assets/Hero2Gallery3.avif';
+
+import Hero3GalleryImg2 from '../assets/Hero3Gallery2.jpg';
+import Hero3GalleryImg3 from '../assets/Hero3Gallery3.avif';
+
+import Hero4GalleryImg1 from '../assets/Hero4Gallery1.avif';
+import Hero4GalleryImg2 from '../assets/Hero4Gallery2.avif';
+import Hero4GalleryImg3 from '../assets/Hero4Gallery3.avif';
 
 const slides = [
   {
     id: 1,
     title: "Adventure",
-    bg: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=1920",
+    bg: HeroImg1,
     gallery: [
-      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=800",
+      HeroGalleryImg1,
+      HeroGalleryImg2,
+      HeroGalleryImg3,
     ]
-  },
+  }, 
   {
     id: 2,
     title: "Vacations",
-    bg: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1920",
+    bg: HeroImg2,
     gallery: [
-      "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1520483601560-389dff434fdf?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&q=80&w=800",
+      Hero2GalleryImg1,
+      Hero2GalleryImg2,
+      Hero2GalleryImg3,
     ]
   },
   {
     id: 3,
-    title: "Hills Station",
-    bg: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=1920",
+    title: "Hills Station", 
+    bg: HeroImg3,
     gallery: [
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1486873240551-a13562911f89?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1502790671504-542ad42d5189?auto=format&fit=crop&q=80&w=800",
+      HeroImg3,
+      Hero3GalleryImg2,
+      Hero3GalleryImg3,
+      
     ]
   },
   {
     id: 4,
     title: "Seasonal",
-    bg: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&q=80&w=1920",
+    bg: HeroImg4,
     gallery: [
-      "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&q=80&w=800",
+      Hero4GalleryImg1,
+      Hero4GalleryImg2,
+      Hero4GalleryImg3,
     ]
   },
 ];
@@ -136,7 +159,7 @@ const Hero = () => {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 1.2 }}
-          className="bg-[#D4E982] text-black px-12 py-5 rounded-2xl font-bold text-lg hover:bg-white transition-all transform hover:scale-105 shadow-2xl shadow-[#D4E982]/20"
+          className="bg-[#D4E982] text-black cursor-pointer px-12 py-5 rounded-2xl font-bold text-lg hover:bg-white transition-all transform hover:scale-105 shadow-2xl shadow-[#D4E982]/20"
         >
           Explore More
         </motion.button>
@@ -149,7 +172,7 @@ const Hero = () => {
             <button
               key={slide.id}
               onClick={() => setActiveSlide(idx)}
-              className={`ForeverA-slide-btn relative p-8 pt-5 pb-5 rounded-2xl transition-all duration-700 text-left overflow-hidden group ${
+              className={`ForeverA-slide-btn cursor-pointer relative p-8 pt-5 pb-5 rounded-2xl transition-all duration-700 text-left overflow-hidden group ${
                 activeSlide === idx 
                 ? 'bg-[#D4E982] text-black shadow-2xl shadow-[#D4E982]/30 scale-105' 
                 : 'bg-white/5 backdrop-blur-2xl text-white border border-white/10 hover:bg-white/10 hover:border-white/20'
@@ -180,7 +203,7 @@ const Hero = () => {
               className="max-w-full max-h-full rounded-2xl shadow-2xl"
               referrerPolicy="no-referrer"
             />
-            <button className="absolute top-10 right-10 text-white hover:text-[#D4E982]">
+            <button className="absolute cursor-pointer top-10 right-10 text-white hover:text-[#D4E982]">
               <Plus size={40} className="rotate-45" />
             </button>
           </motion.div>

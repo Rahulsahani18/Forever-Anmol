@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+// src/Components/TourDetails.jsx
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import axios from 'axios';
 import {
   Clock,
   MapPin,
@@ -11,7 +14,6 @@ import {
   Calendar,
   Star,
   Share2,
-  Heart,
   Camera,
   Info,
   Backpack,
@@ -28,15 +30,27 @@ import {
   UserCheck,
   Ticket,
   X,
-  Phone
+  Phone,
+  AlertCircle
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import CommonInquiryModal from './CommonInquiryModal'; // Import the inquiry modal
 
 const TourDetailing = () => {
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  
   const [activeTab, setActiveTab] = useState('description');
   const [openDay, setOpenDay] = useState(0);
   const [selectedImage, setSelectedImage] = useState(null);
-  const navigate = useNavigate();
+  const [tourData, setTourData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // State for inquiry modal
+  const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
+
   const tabs = [
     { id: 'description', label: 'Overview' },
     { id: 'itinerary', label: 'Itinerary' },
@@ -47,139 +61,147 @@ const TourDetailing = () => {
     { id: 'costing', label: 'Dates & Costing' }
   ];
 
-  const tourData = {
-    title: "Kashmir Valley: The Paradise on Earth",
-    location: "Srinagar, Gulmarg, Pahalgam",
-    price: "24,999",
-    oldPrice: "29,999",
-    duration: "6 Days - 5 Nights",
-    availability: "Seasonal Availability: All New Year (Dec - Feb)",
-    rating: 4.9,
-    reviews: 124,
-    images: [
-      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=800",
-      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&q=80&w=800"
-    ],
-    overview: "Experience the breathtaking beauty of Kashmir, often referred to as 'Paradise on Earth'. This 6-day journey takes you through the serene Dal Lake in Srinagar, the meadow of flowers in Gulmarg, and the picturesque valleys of Pahalgam. Immerse yourself in the local culture, enjoy a traditional Shikara ride, and witness the majestic Himalayan peaks.",
-    itinerary: [
-      {
-        day: 1,
-        title: "Arrival in Srinagar & Shikara Ride",
-        content: "Upon arrival at Srinagar Airport, meet our representative and transfer to your houseboat. In the evening, enjoy a peaceful Shikara ride on Dal Lake, visiting the floating gardens and local markets. Overnight stay in a traditional houseboat."
-      },
-      {
-        day: 2,
-        title: "Srinagar Local Sightseeing",
-        content: "Visit the famous Mughal Gardens - Nishat Bagh (Garden of Pleasure) and Shalimar Bagh (Abode of Love). Later, visit the Shankaracharya Temple for a panoramic view of the city. Overnight stay at a hotel in Srinagar."
-      },
-      {
-        day: 3,
-        title: "Srinagar to Gulmarg (Meadow of Flowers)",
-        content: "Drive to Gulmarg, one of the most beautiful summer resorts in the valley. Enjoy the Gondola ride (world's highest cable car) to Khilanmarg or Apharwat Peak. Explore the lush green meadows and enjoy the cool mountain breeze. Overnight stay in Gulmarg."
-      },
-      {
-        day: 4,
-        title: "Gulmarg to Pahalgam (Valley of Shepherds)",
-        content: "Transfer to Pahalgam via Avantipura ruins and Saffron fields. Visit the Betaab Valley, Aru Valley, and Chandanwari. Enjoy the scenic beauty along the Lidder River. Overnight stay in Pahalgam."
-      },
-      {
-        day: 5,
-        title: "Pahalgam to Srinagar Return",
-        content: "Spend the morning at leisure in Pahalgam. Later, drive back to Srinagar. Evening free for shopping at the local markets for exquisite Kashmiri handicrafts. Overnight stay in Srinagar."
-      },
-      {
-        day: 6,
-        title: "Departure from Srinagar",
-        content: "After breakfast, transfer to Srinagar Airport for your onward journey with beautiful memories of the valley."
-      }
-    ],
-    inclusions: [
-      "Accommodation in 4-star hotels & houseboats",
-      "Daily breakfast and dinner",
-      "Private AC vehicle for all transfers and sightseeing",
-      "Shikara ride on Dal Lake (1 hour)",
-      "All toll taxes, parking, and driver allowances",
-      "24/7 on-call support"
-    ],
-    exclusions: [
-      "Airfare/Train tickets",
-      "Gondola ride tickets in Gulmarg",
-      "Lunch and any personal expenses",
-      "Pony rides or local taxi in Pahalgam/Gulmarg",
-      "Travel insurance",
-      "Anything not mentioned in inclusions"
-    ],
-    note: "Please note that the itinerary is subject to change based on weather conditions and local situations. Gondola ride tickets in Gulmarg are subject to availability and should be booked in advance.",
-    thingsToCarry: [
-      "Warm clothes (even in summer)",
-      "Comfortable walking shoes",
-      "Sunscreen and sunglasses",
-      "Personal medications",
-      "Valid ID proof",
-      "Power bank and camera"
-    ],
-    costing: [
-      { type: "Double Sharing", price: "₹24,999" },
-      { type: "Triple Sharing", price: "₹22,999" },
-      { type: "Single Occupancy", price: "₹34,999" }
-    ]
+  const getImageUrl = (imagePath) => {
+    if (!imagePath) return 'https://via.placeholder.com/800x600?text=No+Image';
+    if (imagePath.startsWith('http')) return imagePath;
+    return `https://test.zeezapperal.com/${imagePath}`;
   };
 
-  const otherDestinations = [
-    {
-      name: "Australia",
-      price: "$116 - $225",
-      image: "https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      name: "Switzerland",
-      price: "$175 - $200",
-      image: "https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      name: "Thailand",
-      price: "$85 - $200",
-      image: "https://images.unsplash.com/photo-1528181304800-2f140819ad9c?auto=format&fit=crop&q=80&w=800"
-    },
-    {
-      name: "Korea",
-      price: "$175 - $285",
-      image: "https://images.unsplash.com/photo-1517154421773-0529f29ea451?auto=format&fit=crop&q=80&w=800"
+  // Format date to display nicely
+  const formatDate = (dateString) => {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
+  };
+
+  // Fetch trip details based on slug
+  useEffect(() => {
+    const fetchTripDetails = async () => {
+      if (!slug) return;
+      
+      setLoading(true);
+      setError(null);
+      
+      try {
+        console.log('Fetching trip details for slug:', slug);
+        const response = await axios.get(`/api/trips/${slug}`);
+        
+        if (response.data && response.data.status === 200) {
+          setTourData(response.data.data);
+          console.log('Trip data loaded:', response.data.data);
+        } else {
+          setError('Failed to load trip details');
+        }
+      } catch (err) {
+        console.error('Error fetching trip details:', err);
+        setError(err.response?.data?.message || 'Unable to load trip details. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchTripDetails();
+  }, [slug]);
+
+  // Function to get icon for amenities
+  const getAmenityIcon = (iconName) => {
+    const icons = {
+      'wifi': <Plane size={28} strokeWidth={1.5} />,
+      'user-tie': <UserCheck size={28} strokeWidth={1.5} />,
+      'bus': <Hotel size={28} strokeWidth={1.5} />,
+      'hotel': <Hotel size={28} strokeWidth={1.5} />,
+      'food': <Utensils size={28} strokeWidth={1.5} />,
+      'ticket': <Ticket size={28} strokeWidth={1.5} />,
+      'camp': <Tent size={28} strokeWidth={1.5} />,
+      'visa': <CreditCard size={28} strokeWidth={1.5} />,
+    };
+    return icons[iconName] || <Plane size={28} strokeWidth={1.5} />;
+  };
+
+  // Get amenities to display
+  const getAmenitiesList = () => {
+    if (!tourData?.amenities || tourData.amenities.length === 0) {
+      return [
+        { icon: Plane, label: "TICKETS", active: tourData?.inc_tickets === '1' },
+        { icon: Hotel, label: "HOTEL", active: tourData?.inc_hotel === '1' },
+        { icon: Tent, label: "CAMP", active: tourData?.inc_camp === '1' },
+        { icon: Utensils, label: "FOOD", active: tourData?.inc_food === '1' },
+        { icon: CreditCard, label: "VISA", active: tourData?.inc_visa === '1' },
+        { icon: UserCheck, label: "MANAGER", active: tourData?.inc_manager === '1' },
+        { icon: Ticket, label: "ENTRY", active: tourData?.inc_entry === '1' },
+      ];
     }
-  ];
+    
+    return tourData.amenities.map(amenity => ({
+      icon: () => getAmenityIcon(amenity.icon),
+      label: amenity.name.toUpperCase(),
+      active: true
+    }));
+  };
+
+  // Handle inquiry button click
+  const handleInquiryClick = () => {
+    setIsInquiryModalOpen(true);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F9FBFB] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#D4E982] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-[#1B3D39]">Loading trip details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !tourData) {
+    return (
+      <div className="min-h-screen bg-[#F9FBFB] flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-8">
+          <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <AlertCircle size={40} className="text-red-500" />
+          </div>
+          <h2 className="text-2xl font-serif text-[#1B3D39] mb-3">Unable to Load Trip</h2>
+          <p className="text-[#1B3D39]/70 mb-6">{error || 'Trip not found'}</p>
+          <button 
+            onClick={() => navigate('/packages')}
+            className="bg-[#D4E982] text-[#1B3D39] px-6 py-3 rounded-xl font-bold hover:bg-[#1B3D39] hover:text-white transition-all"
+          >
+            Back to Packages
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Get all images (hero image + additional images)
+  const allImages = [
+    tourData.hero_image,
+    ...(tourData.images?.map(img => img.image_path) || [])
+  ].filter(Boolean);
+
+  const otherDestinations = tourData.similar || [];
+
+  console.log("otherDestinations:", otherDestinations);
+  
+ 
 
   return (
     <div className="bg-[#F9FBFB] min-h-screen">
-      {/* Hero Banner (Restored from old version) */}
-
+      {/* Hero Banner */}
       <section className="relative h-[60vh] min-h-[500px] flex items-end overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src={tourData.images[4]}
+            src={getImageUrl(tourData.hero_image)}
             alt={tourData.title}
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"
           />
-          {/* Dark overlay covering the entire image */}
           <div className="absolute inset-0 bg-black/60" />
         </div>
 
         <div className="w-[90%] mx-auto relative z-10 pb-16">
-          {/* <div className="flex flex-wrap items-center gap-4 mb-6">
-      <span className="bg-[#D4E982] text-[#1B3D39] px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-        Best Seller
-      </span>
-      <div className="flex items-center gap-1 text-[#D4E982]">
-        <Star size={16} fill="currentColor" />
-        <span className="text-white font-bold">{tourData.rating}</span>
-        <span className="text-white/60 text-sm">({tourData.reviews} Reviews)</span>
-      </div>
-    </div> */}
-
           <h1 className="text-4xl md:text-7xl font-serif text-white mb-6 leading-tight max-w-4xl">
             {tourData.title}
           </h1>
@@ -195,7 +217,7 @@ const TourDetailing = () => {
             </div>
             <div className="flex items-center gap-2">
               <Users size={20} className="text-[#D4E982]" />
-              <span className="font-medium">Group / Private</span>
+              <span className="font-medium">{tourData.type || 'Group'} / {tourData.min_guests || 'Private'}</span>
             </div>
           </div>
         </div>
@@ -205,13 +227,10 @@ const TourDetailing = () => {
           <button className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-[#D4E982] hover:text-[#1B3D39] transition-all">
             <Share2 size={20} />
           </button>
-          {/* <button className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center text-white hover:bg-red-500 hover:text-white transition-all">
-      <Heart size={20} />
-    </button> */}
         </div>
       </section>
 
-      {/* Info Bar (New Improvement) */}
+      {/* Info Bar */}
       <div className="w-[90%] mx-auto -mt-10 relative z-30">
         <div className="bg-[#E0F7FA] rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl border border-white/20">
           <div className="flex flex-wrap items-center gap-6 text-[#1B3D39] font-semibold">
@@ -222,14 +241,16 @@ const TourDetailing = () => {
             <div className="h-6 w-[1px] bg-[#1B3D39]/20 hidden md:block" />
             <div className="flex items-center gap-2">
               <Calendar size={18} className="text-[#1B3D39]/60" />
-              <span>{tourData.availability}</span>
+              <span>{tourData.seasonal_availability || 'Available Year Round'}</span>
             </div>
           </div>
           <div className="flex flex-wrap items-center gap-6">
-            <button className="flex cursor-pointer items-center gap-3 text-[#1B3D39] font-bold hover:text-[#D4E982] transition-colors group">
-              <FileText size={20} className="group-hover:scale-110 transition-transform" />
-              <span>Download Brochure</span>
-            </button>
+            {tourData.brochure_path && (
+              <a href={getImageUrl(tourData.brochure_path)} download className="flex cursor-pointer items-center gap-3 text-[#1B3D39] font-bold hover:text-[#D4E982] transition-colors group">
+                <FileText size={20} className="group-hover:scale-110 transition-transform" />
+                <span>Download Brochure</span>
+              </a>
+            )}
             <div className="flex items-center gap-3">
               {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
                 <a key={i} href="#" className="w-9 h-9 rounded-full border border-[#1B3D39]/10 flex items-center justify-center text-[#1B3D39] hover:bg-[#1B3D39] hover:text-white transition-all">
@@ -295,52 +316,48 @@ const TourDetailing = () => {
                     <div>
                       <h4 className="text-xl font-serif text-[#1B3D39] mb-8">Tours Includes :</h4>
                       <div className="grid grid-cols-4 md:grid-cols-7 gap-6">
-                        {[
-                          { icon: Plane, label: "TICKETS" },
-                          { icon: Hotel, label: "HOTEL" },
-                          { icon: Tent, label: "CAMP" },
-                          { icon: Utensils, label: "FOOD" },
-                          { icon: CreditCard, label: "VISA" },
-                          { icon: UserCheck, label: "MANAGER" },
-                          { icon: Ticket, label: "ENTRY" },
-                        ].map((item, i) => (
+                        {getAmenitiesList().map((item, i) => (
                           <div key={i} className="flex flex-col items-center gap-3 group">
-                            <div className="w-14 h-14 rounded-xl flex items-center justify-center text-[#1B3D39] bg-white shadow-sm border border-[#1B3D39]/5 group-hover:bg-[#D4E982] transition-all">
-                              <item.icon size={28} strokeWidth={1.5} />
+                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${item.active ? 'text-[#1B3D39] bg-white shadow-sm border border-[#1B3D39]/5 group-hover:bg-[#D4E982]' : 'text-[#1B3D39]/30 bg-gray-50 border border-gray-200'} transition-all`}>
+                              {typeof item.icon === 'function' ? item.icon() : <item.icon size={28} strokeWidth={1.5} />}
                             </div>
-                            <span className="text-[9px] font-bold tracking-[0.1em] text-[#1B3D39]/50 uppercase text-center">{item.label}</span>
+                            <span className={`text-[9px] font-bold tracking-[0.1em] uppercase text-center ${item.active ? 'text-[#1B3D39]/50' : 'text-[#1B3D39]/30'}`}>
+                              {item.label}
+                            </span>
                           </div>
                         ))}
                       </div>
                     </div>
 
                     {/* Places You'll See Gallery */}
-                    <div>
-                      <h3 className="text-2xl font-serif text-[#1B3D39] mb-8 flex items-center gap-4">
-                        <Camera className="text-[#D4E982]" /> Places You'll See
-                      </h3>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {tourData.images.map((img, i) => (
-                          <motion.div
-                            key={i}
-                            whileHover={{ y: -5 }}
-                            onClick={() => setSelectedImage(img)}
-                            className="aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shadow-md group"
-                          >
-                            <img
-                              src={img}
-                              alt="Gallery"
-                              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                              referrerPolicy="no-referrer"
-                            />
-                          </motion.div>
-                        ))}
+                    {allImages.length > 0 && (
+                      <div>
+                        <h3 className="text-2xl font-serif text-[#1B3D39] mb-8 flex items-center gap-4">
+                          <Camera className="text-[#D4E982]" /> Places You'll See
+                        </h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {allImages.slice(0, 6).map((img, i) => (
+                            <motion.div
+                              key={i}
+                              whileHover={{ y: -5 }}
+                              onClick={() => setSelectedImage(getImageUrl(img))}
+                              className="aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer shadow-md group"
+                            >
+                              <img
+                                src={getImageUrl(img)}
+                                alt={`Gallery ${i + 1}`}
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                referrerPolicy="no-referrer"
+                              />
+                            </motion.div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </motion.div>
                 )}
 
-                {activeTab === 'itinerary' && (
+                {activeTab === 'itinerary' && tourData.itinerary && (
                   <motion.div
                     key="itinerary"
                     initial={{ opacity: 0, y: 20 }}
@@ -351,7 +368,7 @@ const TourDetailing = () => {
                     <h3 className="text-3xl font-serif text-[#1B3D39] mb-8">Itinerary Plan</h3>
                     {tourData.itinerary.map((item, idx) => (
                       <div
-                        key={idx}
+                        key={item.id}
                         className={`rounded-3xl border transition-all duration-300 ${openDay === idx ? 'bg-white border-[#D4E982] shadow-xl' : 'bg-transparent border-[#1B3D39]/10'
                           }`}
                       >
@@ -362,7 +379,7 @@ const TourDetailing = () => {
                           <div className="flex items-center gap-6">
                             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-bold transition-colors ${openDay === idx ? 'bg-[#1B3D39] text-white' : 'bg-[#D4E982] text-[#1B3D39]'
                               }`}>
-                              0{item.day}
+                              {item.day_number}
                             </div>
                             <h4 className="text-xl font-serif text-[#1B3D39]">{item.title}</h4>
                           </div>
@@ -380,7 +397,7 @@ const TourDetailing = () => {
                               className="overflow-hidden"
                             >
                               <div className="px-8 pb-8 pt-2 ml-[72px] text-[#1B3D39]/60 leading-relaxed">
-                                {item.content}
+                                {item.description}
                               </div>
                             </motion.div>
                           )}
@@ -390,7 +407,7 @@ const TourDetailing = () => {
                   </motion.div>
                 )}
 
-                {activeTab === 'inclusion' && (
+                {activeTab === 'inclusion' && tourData.inclusions && (
                   <motion.div
                     key="inclusion"
                     initial={{ opacity: 0, y: 20 }}
@@ -411,7 +428,7 @@ const TourDetailing = () => {
                   </motion.div>
                 )}
 
-                {activeTab === 'exclusion' && (
+                {activeTab === 'exclusion' && tourData.exclusions && (
                   <motion.div
                     key="exclusion"
                     initial={{ opacity: 0, y: 20 }}
@@ -432,7 +449,7 @@ const TourDetailing = () => {
                   </motion.div>
                 )}
 
-                {activeTab === 'note' && (
+                {activeTab === 'note' && tourData.policy_notes && (
                   <motion.div
                     key="note"
                     initial={{ opacity: 0, y: 20 }}
@@ -445,13 +462,13 @@ const TourDetailing = () => {
                         <h3 className="text-3xl font-serif">Policy & Notes</h3>
                       </div>
                       <p className="text-lg leading-relaxed opacity-80">
-                        {tourData.note}
+                        {tourData.policy_notes}
                       </p>
                     </div>
                   </motion.div>
                 )}
 
-                {activeTab === 'pack' && (
+                {activeTab === 'pack' && tourData.things_to_pack && (
                   <motion.div
                     key="pack"
                     initial={{ opacity: 0, y: 20 }}
@@ -465,7 +482,7 @@ const TourDetailing = () => {
                           <h3 className="text-3xl font-serif">Things To Pack</h3>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          {tourData.thingsToCarry.map((item, i) => (
+                          {tourData.things_to_pack.map((item, i) => (
                             <div key={i} className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
                               <CheckCircle2 size={18} className="text-[#D4E982]" />
                               <span className="text-white/80">{item}</span>
@@ -478,31 +495,48 @@ const TourDetailing = () => {
                   </motion.div>
                 )}
 
-                {activeTab === 'costing' && (
+                {activeTab === 'costing' && tourData.dates && (
                   <motion.div
                     key="costing"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                   >
-                    <h3 className="text-3xl font-serif text-[#1B3D39] mb-8">Dates & Costing</h3>
+                    <h3 className="text-3xl font-serif text-[#1B3D39] mb-8">Dates & Availability</h3>
                     <div className="overflow-hidden rounded-3xl border border-[#1B3D39]/10 shadow-sm">
                       <table className="w-full text-left">
                         <thead className="bg-[#1B3D39] text-white">
                           <tr>
-                            <th className="px-8 py-6 font-serif text-lg">Occupancy Type</th>
-                            <th className="px-8 py-6 font-serif text-lg">Price Per Person</th>
+                            <th className="px-8 py-6 font-serif text-lg">Departure Date</th>
+                            <th className="px-8 py-6 font-serif text-lg">Status</th>
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-[#1B3D39]/10">
-                          {tourData.costing.map((item, i) => (
-                            <tr key={i} className="hover:bg-[#F9FBFB] transition-colors">
-                              <td className="px-8 py-6 font-bold text-[#1B3D39]">{item.type}</td>
-                              <td className="px-8 py-6 font-bold text-[#1B3D39] text-xl">{item.price}</td>
+                          {tourData.dates.map((dateItem, i) => (
+                            <tr key={dateItem.id} className="hover:bg-[#F9FBFB] transition-colors">
+                              <td className="px-8 py-6 font-bold text-[#1B3D39]">{formatDate(dateItem.departure_date)}</td>
+                              <td className="px-8 py-6">
+                                <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                                  dateItem.status === 'Available' ? 'bg-green-100 text-green-700' : 
+                                  dateItem.status === 'Fast Filling' ? 'bg-orange-100 text-orange-700' : 
+                                  'bg-red-100 text-red-700'
+                                }`}>
+                                  {dateItem.status}
+                                </span>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
+                    </div>
+                    
+                    <div className="mt-8 bg-[#F9FBFB] p-6 rounded-2xl border border-[#1B3D39]/10">
+                      <h4 className="text-xl font-serif text-[#1B3D39] mb-4">Pricing</h4>
+                      <div className="flex items-baseline gap-3">
+                        <span className="text-3xl font-bold text-[#1B3D39]">₹{parseInt(tourData.discount_price).toLocaleString()}</span>
+                        <span className="text-lg text-[#1B3D39]/50 line-through">₹{parseInt(tourData.price).toLocaleString()}</span>
+                        <span className="text-sm text-green-600 font-medium">per person</span>
+                      </div>
                     </div>
                   </motion.div>
                 )}
@@ -510,22 +544,24 @@ const TourDetailing = () => {
             </div>
           </div>
 
-          {/* Right Column: Sidebar Booking (Restored from old version) */}
+          {/* Right Column: Sidebar Booking */}
           <div className="lg:w-[35%]">
             <div className="sticky top-32 space-y-8">
-              {/* Price Card */}
+              {/* Price Card - Removed Book Now button */}
               <div className="bg-white rounded-[2.5rem] p-8 shadow-2xl border border-[#1B3D39]/5">
                 <div className="flex items-center justify-between mb-8">
                   <div>
                     <p className="text-xs font-bold text-[#1B3D39]/40 uppercase tracking-widest mb-1">Starting From</p>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-serif text-[#1B3D39]">₹{tourData.price}</span>
-                      <span className="text-lg text-[#1B3D39]/30 line-through">₹{tourData.oldPrice}</span>
+                      <span className="text-4xl font-serif text-[#1B3D39]">₹{parseInt(tourData.discount_price).toLocaleString()}</span>
+                      <span className="text-lg text-[#1B3D39]/30 line-through">₹{parseInt(tourData.price).toLocaleString()}</span>
                     </div>
                   </div>
-                  <div className="bg-[#D4E982]/20 text-[#1B3D39] px-4 py-2 rounded-2xl font-bold text-sm">
-                    15% OFF
-                  </div>
+                  {tourData.price > tourData.discount_price && (
+                    <div className="bg-[#D4E982]/20 text-[#1B3D39] px-4 py-2 rounded-2xl font-bold text-sm">
+                      {Math.round(((tourData.price - tourData.discount_price) / tourData.price) * 100)}% OFF
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-4 mb-8">
@@ -534,21 +570,24 @@ const TourDetailing = () => {
                       <Calendar size={18} className="text-[#1B3D39]/40" />
                       <span className="text-sm font-medium text-[#1B3D39]/60">Departure Date</span>
                     </div>
-                    <span className="text-sm font-bold text-[#1B3D39]">Select Date</span>
+                    <span className="text-sm font-bold text-[#1B3D39]">
+                      {tourData.dates?.[0] ? formatDate(tourData.dates[0].departure_date) : 'Select Date'}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between p-4 bg-[#F9FBFB] rounded-2xl">
                     <div className="flex items-center gap-3">
                       <Users size={18} className="text-[#1B3D39]/40" />
-                      <span className="text-sm font-medium text-[#1B3D39]/60">Total Guests</span>
+                      <span className="text-sm font-medium text-[#1B3D39]/60">Min. Guests</span>
                     </div>
-                    <span className="text-sm font-bold text-[#1B3D39]">02 Guests</span>
+                    <span className="text-sm font-bold text-[#1B3D39]">{tourData.min_guests || '2 Guests'}</span>
                   </div>
                 </div>
 
-                <button className="w-full bg-[#1B3D39] text-white py-5 rounded-2xl font-bold text-lg hover:bg-[#D4E982] hover:text-[#1B3D39] transition-all shadow-xl shadow-[#1B3D39]/20 mb-4">
-                  Book This Trip
-                </button>
-                <button className="w-full border-2 border-[#1B3D39]/10 text-[#1B3D39] py-5 rounded-2xl font-bold text-lg hover:bg-[#1B3D39] hover:text-white transition-all">
+                {/* Inquiry Now button only - Book Now removed */}
+                <button 
+                  onClick={handleInquiryClick}
+                  className="w-full bg-[#1B3D39] cursor-pointer text-white py-5 rounded-2xl font-bold text-lg hover:bg-[#D4E982] hover:text-[#1B3D39] transition-all shadow-xl shadow-[#1B3D39]/20"
+                >
                   Inquiry Now
                 </button>
 
@@ -576,9 +615,8 @@ const TourDetailing = () => {
         </div>
       </div>
 
-      {/* Explore Other Destinations Section (New Improvement) */}
+      {/* Explore Other Destinations Section */}
       <section className="py-32 bg-[#EBF7F7] relative overflow-hidden mt-24">
-        {/* Topographic Background Pattern */}
         <div className="absolute inset-0 opacity-[0.05] pointer-events-none">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -606,17 +644,18 @@ const TourDetailing = () => {
               <motion.div
                 key={idx}
                 whileHover={{ y: -10 }}
+                onClick={() => navigate(`/tour-details/${cat.slug}`)}
                 className="relative group cursor-pointer overflow-hidden rounded-[2rem] aspect-[0.85/1] shadow-2xl"
               >
                 <img
-                  src={cat.image}
-                  alt={cat.name}
+                  src={`https://test.zeezapperal.com/${cat.hero_image}`}
+                  alt={cat.title}
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   referrerPolicy="no-referrer"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-10 w-full">
-                  <h3 className="text-4xl font-serif text-white mb-3 tracking-tight">{cat.name}</h3>
+                  <h3 className="text-4xl font-serif text-white mb-3 tracking-tight">{cat.title}</h3>
                   <p className="text-white/90 text-[15px] font-medium">
                     Price Starts ( {cat.price} )
                   </p>
@@ -633,7 +672,7 @@ const TourDetailing = () => {
         </div>
       </section>
 
-      {/* Image Lightbox (New Improvement) */}
+      {/* Image Lightbox */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div
@@ -644,7 +683,7 @@ const TourDetailing = () => {
             onClick={() => setSelectedImage(null)}
           >
             <button
-              className="absolute top-8 right-8 text-white hover:text-[#D4E982] transition-colors"
+              className="absolute cursor-pointer top-8 right-8 text-white hover:text-[#D4E982] transition-colors"
               onClick={() => setSelectedImage(null)}
             >
               <X size={48} />
@@ -661,6 +700,14 @@ const TourDetailing = () => {
           </motion.div>
         )}
       </AnimatePresence>
+
+{/* Inquiry Modal */}
+<CommonInquiryModal
+  isOpen={isInquiryModalOpen}
+  onClose={() => setIsInquiryModalOpen(false)}
+  preselectedTripTitle={tourData.title} // Pass the trip title instead of location
+  tripTitle={tourData.title}
+/>
     </div>
   );
 };

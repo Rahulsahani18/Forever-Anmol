@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'motion/react';
 import { Mountain, Signpost, Bike, Trees, Plane } from 'lucide-react';
+import FeatureImg from '../assets/MemorableAdventure.webp';
 
 const Feature = () => {
   const features = [
@@ -65,7 +66,7 @@ const Feature = () => {
               {/* Main Image - Woman with suitcase */}
               <div className="relative rounded-[3rem] overflow-hidden">
                 <img 
-                  src="https://images.unsplash.com/photo-1527631746610-bca00a040d60?auto=format&fit=crop&q=80&w=1000" 
+                  src={FeatureImg}
                   alt="Traveler sitting on suitcase" 
                   className="w-full h-auto object-cover"
                   referrerPolicy="no-referrer"

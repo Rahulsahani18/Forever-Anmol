@@ -37,18 +37,18 @@ const Footer = () => {
             Forever
           </div>
 
-          {/* Newsletter Header (No Inputs) */}
-          <div className="mb-20">
-            <span className="text-[10px] font-bold tracking-[0.4em] text-[#D4E982] uppercase mb-4 block">
-              Our Newsletter
-            </span>
-            <h2 className="text-3xl md:text-5xl font-serif max-w-2xl leading-tight">
-              Sign Up To Stay Ahead With The Latest Updates And New Exciting Deals!
-            </h2>
-            <p className="mt-6 text-white/40 text-xs">
-              By entering the email you accept the <a href="#" className="underline hover:text-[#D4E982]">terms & conditions</a>
-            </p>
-          </div>
+{/* Call to Adventure Section */}
+<div className="mb-20">
+  <span className="text-[10px] font-bold tracking-[0.4em] text-[#D4E982] uppercase mb-4 block">
+    Start Your Journey
+  </span>
+  <h2 className="text-3xl md:text-5xl font-serif max-w-2xl leading-tight">
+    Ready to Explore the World? Let's Make It Happen Together
+  </h2>
+  <p className="mt-6 text-white/60 text-sm max-w-xl">
+    From breathtaking landscapes to unforgettable experiences, we're here to turn your travel dreams into reality. Discover your next adventure with us.
+  </p>
+</div>
 
           {/* Divider */}
           <div className="h-[1px] bg-white/10 w-full mb-16" />
@@ -83,7 +83,7 @@ const Footer = () => {
                   { icon: Calendar, text: 'Schedule Appointment' },
                   { icon: FileText, text: 'Book Your Trip Now' },
                   { icon: MessageCircle, text: 'Whatsapp Us' },
-                  { icon: Phone, text: '(+00)-0123456789' },
+                  { icon: Phone, text: '+91 9717726736' },
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-4 group cursor-pointer">
                     <div className="w-10 h-10 bg-[#D4E982] rounded-lg flex items-center justify-center text-[#0A2227] transition-transform group-hover:scale-110">
